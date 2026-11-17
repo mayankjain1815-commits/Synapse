@@ -43,7 +43,8 @@ class NewsScraper:
                         date = article["webPublicationDate"]
                         content_response = requests.get(url, headers = self.headers)
                         soup = BeautifulSoup(content_response.text, 'html.parser')
-                        author = soup.select_one('address a[rel="author"]').get_text(strip=True)
+                        author_el = soup.select_one('address a[rel="author"]') or soup.select_one('a[rel="author"]')
+                        author = author_el.get_text(strip=True) if author_el else ""
                         content = "\n".join(p.get_text(strip=True)
                         for p in soup.select('div.article-body-viewer-selector p'))
                         news_summary = generate_content(prompt_name = "summary_prompt", article = content)
